@@ -1,0 +1,98 @@
+<html>
+<head>
+	<title>MLSA</title>
+	<script src="./vue.js"></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
+	<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
+	<link rel="stylesheet" type="text/css" href="vendor/css-hamburgers/hamburgers.min.css">
+	<link rel="stylesheet" type="text/css" href="vendor/animsition/css/animsition.min.css">
+	<link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
+	<link rel="stylesheet" type="text/css" href="vendor/daterangepicker/daterangepicker.css">
+	<link rel="stylesheet" type="text/css" href="css/util.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<style type="text/css">
+	.progress-bar {
+	position: relative;
+	width: 390px;
+	height: 3em;
+	background-color: #111;
+	border-radius: 1.5em;
+	color: white;
+	padding-top: 10px;
+}
+
+.progress-bar::before {
+	content: attr(data-label);
+	display: flex;
+	align-items: center;
+	position: absolute;
+	left: .5em;
+	top: .5em;
+	bottom: .5em;
+	width: calc(var(--width, 0) * 1%);
+	min-width: 0rem;
+	max-width: calc(100% - 1em);
+	background-color: #069;
+	border-radius: 1em;
+	padding: 1em;}</style>
+</head>
+<body>
+	<div class="container-contact100">
+		<div class="wrap-contact100">
+			<span class="contact100-form-title">Multi-Language Sentiment Analysis</span>
+			<div id="app">
+				<div class="wrap-input100 validate-input" data-validate="Name is required">
+					<span class="label-input100">Your Input</span>
+					<input class="input100" type="text" v-model="info">
+					<span class="focus-input100"></span>
+				</div>
+			<div class="container-contact100-form-btn">
+				<div class="wrap-contact100-form-btn">
+					<div class="contact100-form-bgbtn"></div>
+						<button v-on:click="call()" class="contact100-form-btn">
+							<span>Analyse</span>
+						</button>
+					</div>
+				</div>
+			<p  v-if="message != null">you said : {{message.translated}} ({{message.language}})</p>
+			<p  v-if="message != null">the analysis result is: {{message.sentement*25}} %</p>
+			<div v-if="message != null" class="progress-bar" style="--width: 0" data-label="sentement"></div>
+			<template>
+			      <div class="col-md-12 text-center pt-5">
+			            <h5 v-if="value < 0.8  && value!=null">Very Negative</h5>
+			            <h5 v-else-if="value < 1.6 && value!=null">Negative</h5>
+			            <h5 v-else-if="value < 2.4 && value!=null">Neutral</h5>
+			            <h5 v-else-if="value < 3.2 && value!=null">Positive</h5>
+			            <h5 v-else-if="value!=null">Very Positive</h5>
+			      </div>
+			</template>
+			</div>
+		</div>
+	</div>
+<script >
+new Vue({
+  el: '#app',
+    data () {
+    return {
+      info: "",
+      message : null,
+      value: null,
+      max: 4
+    }
+  },
+  methods : {
+      call : function(){
+    fetch('https://sentement.herokuapp.com/'+encodeURIComponent(this.info))
+      .then(response => response.json())
+      .then(data => this.message=data)
+      .then(data => this.value = data.sentement)
+      .then(data => (document.getElementsByClassName('progress-bar')[0]).style.setProperty('--width',this.value*25))
+  }},
+});
+</script>
+</body>
+</html>
