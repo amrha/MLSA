@@ -1,6 +1,6 @@
 catboost==0.23
 Flask==1.1.2
-Flask-Cors==3.0.8
+Flask-Cors==3.0.9
 nltk==3.4.5
 pickleshare==0.7.5
 sklearn==0.0
